@@ -1,0 +1,204 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NestVault_Linux.ViewModels"
+             xmlns:models="using:NestVault_Linux.Models"
+             x:Class="NestVault_Linux.Views.BackupConfigsPage"
+             x:DataType="vm:BackupConfigsViewModel">
+
+    <Grid ColumnDefinitions="220,1,*">
+
+        <!-- Left: Profile List -->
+        <DockPanel Grid.Column="0">
+
+            <!-- Toolbar -->
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="8,8,8,4">
+                <Button Command="{CompiledBinding AddProfileCommand}"    Content="+" ToolTip.Tip="Add Profile"/>
+                <Button Command="{CompiledBinding DeleteProfileCommand}"
+                        CommandParameter="{CompiledBinding SelectedProfile}"
+                        Content="−" ToolTip.Tip="Delete Selected"
+                        IsEnabled="{CompiledBinding IsEditing}"/>
+                <Button Command="{CompiledBinding SaveProfileCommand}"
+                        Content="✓" ToolTip.Tip="Save"
+                        IsEnabled="{CompiledBinding IsDirty}"/>
+            </StackPanel>
+
+            <ListBox ItemsSource="{CompiledBinding Profiles}"
+                     SelectedItem="{CompiledBinding SelectedProfile}"
+                     Margin="4,0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:BackupProfile">
+                        <StackPanel Margin="4,4" Spacing="2">
+                            <TextBlock Text="{CompiledBinding Name}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{CompiledBinding Label}" FontSize="11" Opacity="0.6"
+                                       FontFamily="monospace"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- Divider -->
+        <Border Grid.Column="1" Classes="Divider"/>
+
+        <!-- Right: Editor -->
+        <ScrollViewer Grid.Column="2" IsVisible="{CompiledBinding IsEditing}" Padding="16">
+            <StackPanel Spacing="0" DataContext="{CompiledBinding EditingProfile}">
+
+                <TabControl>
+
+                    <!-- General Tab -->
+                    <TabItem Header="General">
+                        <StackPanel Spacing="12" Margin="0,12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Name" Classes="SectionHeader"/>
+                                <TextBox Text="{CompiledBinding Name}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Backup Label" Classes="SectionHeader"/>
+                                <TextBox Text="{CompiledBinding Label}" FontFamily="monospace"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Source Folder" Classes="SectionHeader"/>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <TextBox Grid.Column="0" Text="{CompiledBinding SourcePath}"/>
+                                    <Button Grid.Column="1" Content="Browse…"
+                                            Click="BrowseFolder_Click"/>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Workers (parallel uploads)" Classes="SectionHeader"/>
+                                <NumericUpDown Value="{CompiledBinding Workers}" Minimum="1" Maximum="16"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Remote Prefix (optional)" Classes="SectionHeader"/>
+                                <TextBox Text="{CompiledBinding Prefix}" Watermark="e.g. /backups/"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <ToggleSwitch Content="Enabled"
+                                             IsChecked="{CompiledBinding Enabled}"/>
+                                <ToggleSwitch Content="Smart Skip (skip if no changes)"
+                                             IsChecked="{CompiledBinding SmartSkip}"/>
+                                <ToggleSwitch Content="Accumulate (absorb previous version)"
+                                             IsChecked="{CompiledBinding Accumulate}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+
+                    <!-- Server Tab -->
+                    <TabItem Header="Server">
+                        <StackPanel Spacing="12" Margin="0,12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Server Override (leave blank to use global)" Classes="SectionHeader"/>
+                                <TextBox Text="{CompiledBinding ServerOverride}"
+                                         Watermark="http://..."/>
+                            </StackPanel>
+                            <Button Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).TestConnectionCommand}"
+                                    Content="Test Connection"
+                                    IsEnabled="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).!IsTestingConnection}"/>
+                            <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).TestConnectionStatus}"
+                                       Opacity="0.8"/>
+                        </StackPanel>
+                    </TabItem>
+
+                    <!-- Schedule Tab -->
+                    <TabItem Header="Schedule">
+                        <StackPanel Spacing="12" Margin="0,12" DataContext="{CompiledBinding Schedule}">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Frequency" Classes="SectionHeader"/>
+                                <ComboBox SelectedIndex="{CompiledBinding FrequencyIndex}" MinWidth="160">
+                                    <ComboBoxItem Content="Off"/>
+                                    <ComboBoxItem Content="Hourly"/>
+                                    <ComboBoxItem Content="Daily"/>
+                                    <ComboBoxItem Content="Weekly"/>
+                                    <ComboBoxItem Content="Custom"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Hour" Classes="SectionHeader"/>
+                                <NumericUpDown Value="{CompiledBinding Hour}" Minimum="0" Maximum="23"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Minute" Classes="SectionHeader"/>
+                                <NumericUpDown Value="{CompiledBinding Minute}" Minimum="0" Maximum="59"/>
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Custom interval (minutes)" Classes="SectionHeader"/>
+                                <NumericUpDown Value="{CompiledBinding CustomMinutes}" Minimum="1" Maximum="10080"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+
+                    <!-- Exclusions Tab -->
+                    <TabItem Header="Exclusions">
+                        <StackPanel Spacing="12" Margin="0,12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Exclude Patterns" Classes="SectionHeader"/>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <TextBox Grid.Column="0"
+                                             Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).NewExclude}"
+                                             Watermark="e.g. .DS_Store or node_modules"/>
+                                    <Button Grid.Column="1" Content="Add"
+                                            Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).AddExcludeCommand}"/>
+                                </Grid>
+                                <ListBox ItemsSource="{CompiledBinding Excludes}"
+                                         MaxHeight="180">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="x:String">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{CompiledBinding}" FontFamily="monospace"/>
+                                                <Button Grid.Column="1" Content="×" Padding="4,0"
+                                                        Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).RemoveExcludeCommand}"
+                                                        CommandParameter="{CompiledBinding}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+
+                </TabControl>
+
+                <!-- Actions -->
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,16">
+                    <Button Content="▶ Run Backup" Click="RunBackup_Click"/>
+                    <Button Content="⏫ Run Queue"  Click="RunQueue_Click"/>
+                </StackPanel>
+
+                <!-- CLI Preview -->
+                <Expander Header="CLI Preview" Margin="0,8">
+                    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            CornerRadius="4" Padding="12" Margin="0,8">
+                        <SelectableTextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliPreview}"
+                                             FontFamily="monospace" FontSize="12"
+                                             TextWrapping="Wrap"/>
+                    </Border>
+                </Expander>
+
+                <!-- CLI Import -->
+                <Expander Header="Import from CLI Command" Margin="0,4">
+                    <StackPanel Spacing="8" Margin="0,8">
+                        <TextBox Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportText}"
+                                 AcceptsReturn="True" Height="80"
+                                 Watermark="Paste nestvault backup ... command here"/>
+                        <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError}"
+                                   Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                   IsVisible="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError, Converter={StaticResource CountToVisibilityConverter}}"/>
+                        <Button Content="Import"
+                                Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).ImportFromCliCommand}"/>
+                    </StackPanel>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Empty state -->
+        <TextBlock Grid.Column="2"
+                   IsVisible="{CompiledBinding !IsEditing}"
+                   Text="Select or create a backup profile to edit"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Opacity="0.5"/>
+
+    </Grid>
+
+</UserControl>

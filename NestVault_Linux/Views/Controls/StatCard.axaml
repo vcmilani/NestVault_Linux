@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NestVault_Linux.Views.Controls.StatCard"
+             x:Name="Root">
+
+    <Border Classes="Card" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8" Padding="16" Margin="4">
+        <StackPanel Spacing="4">
+            <TextBlock Text="{Binding Value, ElementName=Root}"
+                       FontSize="26" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Title, ElementName=Root}"
+                       FontSize="13" FontWeight="SemiBold" Opacity="0.85"/>
+            <TextBlock Text="{Binding Subtitle, ElementName=Root}"
+                       FontSize="11" Opacity="0.55"/>
+        </StackPanel>
+    </Border>
+
+</UserControl>

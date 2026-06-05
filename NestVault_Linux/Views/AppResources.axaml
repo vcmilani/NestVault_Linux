@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:NestVault_Linux.Views">
+
+    <!-- Value Converters -->
+    <conv:BoolToVisibilityConverter    x:Key="BoolToVisibilityConverter"/>
+    <conv:BoolNegToVisibilityConverter x:Key="BoolNegToVisibilityConverter"/>
+    <conv:BoolNegateConverter          x:Key="BoolNegateConverter"/>
+    <conv:CountToVisibilityConverter   x:Key="CountToVisibilityConverter"/>
+    <conv:BoolToGreenRedColorConverter x:Key="BoolToGreenRedColorConverter"/>
+    <conv:BoolToRedBrushConverter      x:Key="BoolToRedBrushConverter"/>
+    <conv:LogKindToColorBrushConverter x:Key="LogKindToColorBrushConverter"/>
+
+    <!-- Shared styles -->
+    <Style Selector="TextBlock.SectionHeader">
+        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Opacity"    Value="0.7"/>
+        <Setter Property="Margin"     Value="0,12,0,4"/>
+    </Style>
+
+    <Style Selector="Border.Card">
+        <Setter Property="CornerRadius"    Value="8"/>
+        <Setter Property="Padding"         Value="16"/>
+        <Setter Property="Margin"          Value="4"/>
+        <Setter Property="Background"      Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
+    </Style>
+
+    <Style Selector="Border.Divider">
+        <Setter Property="Width"           Value="1"/>
+        <Setter Property="Background"      Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="Margin"          Value="0"/>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter</value></resheader>
+
+  <data name="App.DisplayName"><value>NestVault</value></data>
+  <data name="Dashboard.Title"><value>Painel</value></data>
+  <data name="Backups.Title"><value>Backups</value></data>
+  <data name="MyBackups.Title"><value>Meus Backups</value></data>
+  <data name="Cleanup.Title"><value>Limpeza</value></data>
+  <data name="Settings.Title"><value>Configurações</value></data>
+
+  <data name="Stats.Backups"><value>Backups</value></data>
+  <data name="Stats.Versions"><value>Versões</value></data>
+  <data name="Stats.Files"><value>Arquivos</value></data>
+  <data name="Stats.TotalSize"><value>Tamanho Total</value></data>
+
+  <data name="Server.Connected"><value>Servidor Conectado</value></data>
+  <data name="Server.Disconnected"><value>Sem conexão com o servidor</value></data>
+  <data name="Server.TestConnection"><value>Testar Conexão</value></data>
+
+  <data name="Tray.Open"><value>Abrir NestVault</value></data>
+  <data name="Tray.Quit"><value>Sair</value></data>
+
+  <data name="Backup.Running"><value>Executando Backup</value></data>
+  <data name="Backup.Done"><value>Backup concluído</value></data>
+  <data name="Backup.Failed"><value>Falha no backup</value></data>
+  <data name="Backup.Cancelled"><value>Backup cancelado</value></data>
+</root>

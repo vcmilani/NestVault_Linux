@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NestVault_Linux.ViewModels"
+             x:Class="NestVault_Linux.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel">
+
+    <ScrollViewer Padding="24">
+        <StackPanel MaxWidth="600" Spacing="16">
+
+            <TextBlock Text="Settings" FontSize="22" FontWeight="Bold"/>
+
+            <TabControl>
+
+                <!-- General Tab -->
+                <TabItem Header="General">
+                    <StackPanel Spacing="16" Margin="0,12">
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Launch at Startup" Classes="SectionHeader"/>
+                            <ToggleSwitch Content="Start NestVault when I log in"
+                                         IsChecked="{CompiledBinding LaunchAtStartup}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Power &amp; Network" Classes="SectionHeader"/>
+                            <ToggleSwitch Content="Pause scheduled backups on battery"
+                                         IsChecked="{CompiledBinding PauseOnBattery}"/>
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Minimum battery % to allow backup"/>
+                                <NumericUpDown Value="{CompiledBinding MinBatteryPercent}"
+                                               Minimum="0" Maximum="100"
+                                               IsEnabled="{CompiledBinding PauseOnBattery}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border Classes="Card">
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Power Status" Opacity="0.6"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{CompiledBinding PowerStatusText}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Network" Opacity="0.6"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{CompiledBinding NetworkType}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Network Available" Opacity="0.6"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{CompiledBinding IsNetworkAvailable}"
+                                           Foreground="{CompiledBinding IsNetworkAvailable, Converter={StaticResource BoolToGreenRedColorConverter}}"/>
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Server Tab -->
+                <TabItem Header="Server">
+                    <StackPanel Spacing="12" Margin="0,12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Server URL" Classes="SectionHeader"/>
+                            <TextBox Text="{CompiledBinding ServerUrl}" Watermark="http://..."/>
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="API Key" Classes="SectionHeader"/>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox Grid.Column="0"
+                                         Text="{CompiledBinding ApiKey}"
+                                         PasswordChar="{CompiledBinding ShowApiKey, Converter={StaticResource BoolNegateConverter}, ConverterParameter='•'}"
+                                         Watermark="optional"/>
+                                <ToggleButton Grid.Column="1"
+                                              IsChecked="{CompiledBinding ShowApiKey}"
+                                              Content="👁"/>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Test Connection"
+                                    Command="{CompiledBinding TestConnectionCommand}"
+                                    IsEnabled="{CompiledBinding !IsTestingConnection}"/>
+                        </StackPanel>
+                        <TextBlock Text="{CompiledBinding TestConnectionStatus}" Opacity="0.8"
+                                   IsVisible="{CompiledBinding TestConnectionStatus, Converter={StaticResource CountToVisibilityConverter}}"/>
+                        <TextBlock Text="{CompiledBinding ServerVersion}" Opacity="0.6"/>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Queue Schedule Tab -->
+                <TabItem Header="Queue Schedule">
+                    <StackPanel Spacing="12" Margin="0,12" DataContext="{CompiledBinding QueueSchedule}">
+                        <TextBlock Text="Scheduled Queue Run" Classes="SectionHeader"/>
+                        <TextBlock Opacity="0.7" TextWrapping="Wrap"
+                                   Text="Run all enabled profiles in sequence on a schedule."/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Frequency" Classes="SectionHeader"/>
+                            <ComboBox SelectedIndex="{CompiledBinding FrequencyIndex}" MinWidth="160">
+                                <ComboBoxItem Content="Off"/>
+                                <ComboBoxItem Content="Hourly"/>
+                                <ComboBoxItem Content="Daily"/>
+                                <ComboBoxItem Content="Weekly"/>
+                                <ComboBoxItem Content="Custom"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Spacing="4" IsVisible="{CompiledBinding Enabled}">
+                            <TextBlock Text="Hour" Classes="SectionHeader"/>
+                            <NumericUpDown Value="{CompiledBinding Hour}" Minimum="0" Maximum="23"/>
+                            <TextBlock Text="Minute" Classes="SectionHeader"/>
+                            <NumericUpDown Value="{CompiledBinding Minute}" Minimum="0" Maximum="59"/>
+                            <TextBlock Text="Custom interval (minutes)" Classes="SectionHeader"/>
+                            <NumericUpDown Value="{CompiledBinding CustomMinutes}" Minimum="1" Maximum="10080"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- About Tab -->
+                <TabItem Header="About">
+                    <StackPanel Spacing="12" Margin="0,12" HorizontalAlignment="Center">
+                        <TextBlock Text="NestVault" FontSize="28" FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{CompiledBinding AppVersion, StringFormat='v{0}'}"
+                                   Opacity="0.6" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Self-hosted backup manager" Opacity="0.7"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Linux client — Avalonia UI 11"
+                                   Opacity="0.5" FontSize="12" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </TabItem>
+
+            </TabControl>
+
+            <!-- Save -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Save Settings"
+                        Command="{CompiledBinding SaveCommand}"
+                        IsEnabled="{CompiledBinding IsDirty}"/>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

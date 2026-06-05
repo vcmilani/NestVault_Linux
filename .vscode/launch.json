@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "NestVault Linux (Debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/NestVault_Linux/bin/Debug/net8.0/NestVault_Linux",
+      "args": [],
+      "cwd": "${workspaceFolder}/NestVault_Linux",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    }
+  ]
+}

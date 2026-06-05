@@ -1,0 +1,74 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NestVault_Linux.ViewModels"
+        xmlns:models="using:NestVault_Linux.Models"
+        xmlns:services="using:NestVault_Linux.Services"
+        x:Class="NestVault_Linux.Views.BackupQueueDialog"
+        x:DataType="vm:BackupQueueViewModel"
+        Title="Backup Queue"
+        Width="520" Height="460"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto,Auto" Margin="20">
+
+        <!-- Idle: profile selection -->
+        <StackPanel Grid.Row="0" IsVisible="{CompiledBinding IsIdle}" Spacing="12">
+            <TextBlock Text="Select profiles to include in the queue:"
+                       Opacity="0.7"/>
+            <ListBox ItemsSource="{CompiledBinding AllProfiles}"
+                     SelectionMode="Multiple"
+                     SelectionChanged="ProfileList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:BackupProfile">
+                        <StackPanel Margin="4,4" Spacing="2">
+                            <TextBlock Text="{CompiledBinding Name}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{CompiledBinding Label}" FontSize="11" Opacity="0.6"
+                                       FontFamily="monospace"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <!-- Running / Done: queue items -->
+        <StackPanel Grid.Row="0"
+                    IsVisible="{CompiledBinding IsIdle, Converter={StaticResource BoolNegToVisibilityConverter}}"
+                    Spacing="12">
+            <TextBlock Text="Queue Progress" FontWeight="SemiBold"/>
+            <ProgressBar Value="{CompiledBinding Progress}" Minimum="0" Maximum="1" Height="6"/>
+            <ListBox ItemsSource="{CompiledBinding QueueItems}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="services:BackupQueue+QueueItem">
+                        <Grid ColumnDefinitions="30,*" Margin="4,4">
+                            <TextBlock Grid.Column="0" Text="{CompiledBinding StatusIcon}"
+                                       FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{CompiledBinding Profile.Name}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <!-- Spacer -->
+        <Rectangle Grid.Row="1" Height="1"
+                   Fill="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                   Margin="0,12,0,12"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+            <Button Content="Cancel Queue"
+                    Command="{CompiledBinding CancelQueueCommand}"
+                    IsEnabled="{CompiledBinding IsRunning}"/>
+            <Button Content="Start Queue"
+                    Command="{CompiledBinding StartQueueCommand}"
+                    IsEnabled="{CompiledBinding CanStart}"
+                    IsVisible="{CompiledBinding !IsRunning}"/>
+            <Button Content="Close"
+                    IsEnabled="{CompiledBinding !IsRunning}"
+                    Click="Close_Click"/>
+        </StackPanel>
+
+    </Grid>
+
+</Window>

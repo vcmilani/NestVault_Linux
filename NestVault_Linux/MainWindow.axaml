@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="NestVault_Linux.MainWindow"
+        Title="NestVault"
+        Width="1060" Height="700"
+        MinWidth="860" MinHeight="520"
+        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+
+    <Grid ColumnDefinitions="200,*">
+
+        <!-- Navigation Pane -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource NavigationViewDefaultPaneBackground}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="0,0,1,0">
+            <DockPanel>
+
+                <!-- App Title -->
+                <Border DockPanel.Dock="Top" Padding="16,20,16,12">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="🏛" FontSize="20"/>
+                        <TextBlock Text="NestVault" FontSize="16" FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings Footer -->
+                <ListBox x:Name="FooterNav"
+                         DockPanel.Dock="Bottom"
+                         SelectionChanged="FooterNav_SelectionChanged"
+                         Background="Transparent"
+                         Padding="8,8">
+                    <ListBoxItem Tag="settings" Padding="8,8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⚙" FontSize="14"/>
+                            <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+
+                <!-- Main Nav -->
+                <ListBox x:Name="MainNav"
+                         DockPanel.Dock="Top"
+                         SelectionChanged="MainNav_SelectionChanged"
+                         Background="Transparent"
+                         Padding="8,0">
+                    <ListBoxItem Tag="dashboard" Padding="8,8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⌂" FontSize="14"/>
+                            <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="backups" Padding="8,8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⬡" FontSize="14"/>
+                            <TextBlock Text="Backups" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="mybackups" Padding="8,8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="🛡" FontSize="14"/>
+                            <TextBlock Text="My Backups" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="cleanup" Padding="8,8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="🗑" FontSize="14"/>
+                            <TextBlock Text="Cleanup" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+
+            </DockPanel>
+        </Border>
+
+        <!-- Content Frame -->
+        <ContentControl Grid.Column="1" x:Name="ContentFrame"/>
+
+    </Grid>
+</Window>

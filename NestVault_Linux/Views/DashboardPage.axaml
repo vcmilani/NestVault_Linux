@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NestVault_Linux.ViewModels"
+             xmlns:models="using:NestVault_Linux.Models"
+             xmlns:controls="using:NestVault_Linux.Views.Controls"
+             x:Class="NestVault_Linux.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16">
+
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="Dashboard" FontSize="22" FontWeight="Bold"/>
+                <Button Grid.Column="1"
+                        Command="{CompiledBinding ReloadCommand}"
+                        IsEnabled="{CompiledBinding !IsLoading}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="↻"/>
+                        <TextBlock Text="Reload"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Disconnected Banner -->
+            <Border IsVisible="{CompiledBinding !IsConnected}"
+                    Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                    CornerRadius="6" Padding="12,8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="⚠" VerticalAlignment="Center"/>
+                    <StackPanel>
+                        <TextBlock Text="Not connected to server" FontWeight="SemiBold"/>
+                        <TextBlock Text="{CompiledBinding ConnectionError}" Opacity="0.7" FontSize="12"
+                                   IsVisible="{CompiledBinding ConnectionError, Converter={StaticResource CountToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Stats Cards -->
+            <Grid ColumnDefinitions="*,*,*,*">
+                <controls:StatCard Grid.Column="0"
+                                   Title="Backups"
+                                   Value="{CompiledBinding Stats.TotalBackups, StringFormat=\{0\}}"
+                                   Subtitle="labels"/>
+                <controls:StatCard Grid.Column="1"
+                                   Title="Versions"
+                                   Value="{CompiledBinding Stats.TotalVersions, StringFormat=\{0\}}"
+                                   Subtitle="snapshots"/>
+                <controls:StatCard Grid.Column="2"
+                                   Title="Files"
+                                   Value="{CompiledBinding Stats.TotalFiles, StringFormat=\{0\}}"
+                                   Subtitle="stored"/>
+                <controls:StatCard Grid.Column="3"
+                                   Title="Total Size"
+                                   Value="{CompiledBinding Stats.FormattedSize}"
+                                   Subtitle="on server"/>
+            </Grid>
+
+            <!-- Server Status -->
+            <Border Classes="Card">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Ellipse Width="10" Height="10" VerticalAlignment="Center"
+                             Fill="{CompiledBinding IsConnected, Converter={StaticResource BoolToGreenRedColorConverter}}"/>
+                    <StackPanel>
+                        <TextBlock Text="Server Connected" FontWeight="SemiBold"
+                                   IsVisible="{CompiledBinding IsConnected}"/>
+                        <TextBlock Text="Server Disconnected" FontWeight="SemiBold"
+                                   IsVisible="{CompiledBinding !IsConnected}"/>
+                        <TextBlock Text="{CompiledBinding ServerVersion, StringFormat='v{0}'}"
+                                   FontSize="12" Opacity="0.6"
+                                   IsVisible="{CompiledBinding IsConnected}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Backups List -->
+            <TextBlock Text="Recent Backups" Classes="SectionHeader"/>
+            <Border Classes="Card" Padding="0" MinHeight="60">
+                <ListBox ItemsSource="{CompiledBinding Backups}"
+                         MaxHeight="280"
+                         Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:BackupSummary">
+                            <Grid ColumnDefinitions="*,60,80" Margin="12,8">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{CompiledBinding Label}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{CompiledBinding ClientName}" FontSize="12" Opacity="0.6"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{CompiledBinding VersionCount, StringFormat='{0} ver'}"
+                                           Opacity="0.7" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBlock Grid.Column="2" Text="{CompiledBinding FormattedSize}"
+                                           VerticalAlignment="Center" TextAlignment="Right" FontSize="12"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- How It Works -->
+            <Expander Header="How It Works">
+                <StackPanel Spacing="8" Margin="0,8">
+                    <TextBlock TextWrapping="Wrap" Opacity="0.8"
+                               Text="NestVault backs up your folders to a self-hosted server. Each run creates a new version of your backup, allowing you to restore any point in time."/>
+                    <TextBlock TextWrapping="Wrap" Opacity="0.8"
+                               Text="Smart Skip detects when nothing has changed and records a reference to the last version instead of uploading duplicate files."/>
+                    <TextBlock TextWrapping="Wrap" Opacity="0.8"
+                               Text="The scheduler automatically runs backups based on your configured frequency, respecting battery and network conditions."/>
+                </StackPanel>
+            </Expander>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
