@@ -41,6 +41,9 @@ public partial class App : Application
             MainAppWindow  = mainWindow;
             desktop.MainWindow = mainWindow;
 
+            using (var appIconStream = AssetLoader.Open(new Uri("avares://NestVault_Linux/Assets/app.png")))
+                mainWindow.Icon = new WindowIcon(appIconStream);
+
             SetupTray();
 
             mainWindow.Closing += (_, e) =>
