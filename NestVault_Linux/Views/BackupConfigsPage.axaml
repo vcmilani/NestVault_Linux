@@ -60,7 +60,7 @@
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Source Folder" Classes="SectionHeader"/>
                                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                    <TextBox Grid.Column="0" Text="{CompiledBinding SourcePath}"/>
+                                    <TextBox Grid.Column="0" x:Name="SourcePathBox" Text="{CompiledBinding SourcePath}"/>
                                     <Button Grid.Column="1" Content="Browse…"
                                             Click="BrowseFolder_Click"/>
                                 </Grid>
@@ -71,7 +71,7 @@
                             </StackPanel>
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Remote Prefix (optional)" Classes="SectionHeader"/>
-                                <TextBox Text="{CompiledBinding Prefix}" Watermark="e.g. /backups/"/>
+                                <TextBox Text="{CompiledBinding Prefix}" PlaceholderText="e.g. /backups/"/>
                             </StackPanel>
                             <StackPanel Spacing="4">
                                 <ToggleSwitch Content="Enabled"
@@ -90,11 +90,11 @@
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Server Override (leave blank to use global)" Classes="SectionHeader"/>
                                 <TextBox Text="{CompiledBinding ServerOverride}"
-                                         Watermark="http://..."/>
+                                         PlaceholderText="http://..."/>
                             </StackPanel>
                             <Button Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).TestConnectionCommand}"
                                     Content="Test Connection"
-                                    IsEnabled="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).!IsTestingConnection}"/>
+                                    IsEnabled="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).IsNotTestingConnection}"/>
                             <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).TestConnectionStatus}"
                                        Opacity="0.8"/>
                         </StackPanel>
@@ -136,7 +136,7 @@
                                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                                     <TextBox Grid.Column="0"
                                              Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).NewExclude}"
-                                             Watermark="e.g. .DS_Store or node_modules"/>
+                                             PlaceholderText="e.g. .DS_Store or node_modules"/>
                                     <Button Grid.Column="1" Content="Add"
                                             Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).AddExcludeCommand}"/>
                                 </Grid>
@@ -180,7 +180,7 @@
                     <StackPanel Spacing="8" Margin="0,8">
                         <TextBox Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportText}"
                                  AcceptsReturn="True" Height="80"
-                                 Watermark="Paste nestvault backup ... command here"/>
+                                 PlaceholderText="Paste nestvault backup ... command here"/>
                         <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError}"
                                    Foreground="{DynamicResource SystemFillColorCriticalBrush}"
                                    IsVisible="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError, Converter={StaticResource CountToVisibilityConverter}}"/>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -24,15 +25,22 @@ public partial class BackupRunner : ObservableObject
     public record LogEntry(string Text, LogKind Kind);
     public enum LogKind { Info, Success, Warning, Error }
 
-    public class Stats
+    public class RunStats
     {
-        public int Total, Uploaded, Registered, Cached, Ignored, Errors, Inherited, Skipped;
+        public int Total      { get; set; }
+        public int Uploaded   { get; set; }
+        public int Registered { get; set; }
+        public int Cached     { get; set; }
+        public int Ignored    { get; set; }
+        public int Errors     { get; set; }
+        public int Inherited  { get; set; }
+        public int Skipped    { get; set; }
     }
 
     [ObservableProperty] private RunStatus _status = RunStatus.Idle;
     [ObservableProperty] private List<LogEntry> _entries = [];
     [ObservableProperty] private double _progress;
-    [ObservableProperty] private Stats _stats = new();
+    [ObservableProperty] private RunStats _stats = new();
     [ObservableProperty] private string _currentFile = "";
     [ObservableProperty] private bool _wasFullBackup = true;
 
@@ -64,7 +72,7 @@ public partial class BackupRunner : ObservableObject
         _session  = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
         Status    = RunStatus.Running;
         Entries   = [];
-        Stats     = new Stats();
+        Stats     = new RunStats();
         Progress  = 0;
         WasFullBackup = true;
 

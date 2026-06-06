@@ -19,7 +19,10 @@ public partial class BackupConfigsViewModel : ObservableObject
     [ObservableProperty] private bool                _isEditing;
     [ObservableProperty] private bool                _isDirty;
     [ObservableProperty] private string              _testConnectionStatus = "";
-    [ObservableProperty] private bool                _isTestingConnection;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotTestingConnection))]
+    private bool _isTestingConnection;
+    public bool IsNotTestingConnection => !IsTestingConnection;
     [ObservableProperty] private string              _newExclude = "";
     [ObservableProperty] private string              _cliImportText = "";
     [ObservableProperty] private string?             _cliImportError;

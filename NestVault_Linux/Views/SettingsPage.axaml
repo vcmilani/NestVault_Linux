@@ -54,7 +54,7 @@
                     <StackPanel Spacing="12" Margin="0,12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="Server URL" Classes="SectionHeader"/>
-                            <TextBox Text="{CompiledBinding ServerUrl}" Watermark="http://..."/>
+                            <TextBox Text="{CompiledBinding ServerUrl}" PlaceholderText="http://..."/>
                         </StackPanel>
                         <StackPanel Spacing="4">
                             <TextBlock Text="API Key" Classes="SectionHeader"/>
@@ -62,7 +62,7 @@
                                 <TextBox Grid.Column="0"
                                          Text="{CompiledBinding ApiKey}"
                                          PasswordChar="{CompiledBinding ShowApiKey, Converter={StaticResource BoolNegateConverter}, ConverterParameter='•'}"
-                                         Watermark="optional"/>
+                                         PlaceholderText="optional"/>
                                 <ToggleButton Grid.Column="1"
                                               IsChecked="{CompiledBinding ShowApiKey}"
                                               Content="👁"/>

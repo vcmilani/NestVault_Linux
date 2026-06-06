@@ -86,7 +86,7 @@
                                     <TextBlock Text="{CompiledBinding Label}" FontWeight="SemiBold"/>
                                     <TextBlock Text="{CompiledBinding ClientName}" FontSize="12" Opacity="0.6"/>
                                 </StackPanel>
-                                <TextBlock Grid.Column="1" Text="{CompiledBinding VersionCount, StringFormat='{0} ver'}"
+                                <TextBlock Grid.Column="1" Text="{CompiledBinding VersionCount, StringFormat='{}{0} ver'}"
                                            Opacity="0.7" VerticalAlignment="Center" FontSize="12"/>
                                 <TextBlock Grid.Column="2" Text="{CompiledBinding FormattedSize}"
                                            VerticalAlignment="Center" TextAlignment="Right" FontSize="12"/>

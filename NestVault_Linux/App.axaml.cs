@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using NestVault_Linux.Services;
 
@@ -64,9 +65,11 @@ public partial class App : Application
 
     private void SetupTray()
     {
+        using var iconStream = AssetLoader.Open(new Uri("avares://NestVault_Linux/Assets/tray.png"));
         var trayIcon = new TrayIcon
         {
             ToolTipText = "NestVault",
+            Icon = new WindowIcon(iconStream),
             Menu = new NativeMenu()
         };
 

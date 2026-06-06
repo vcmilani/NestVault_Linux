@@ -30,7 +30,9 @@ public partial class BackupConfigsPage : UserControl
 
         if (folders.Count > 0 && Vm?.EditingProfile is not null)
         {
-            Vm.EditingProfile.SourcePath = folders[0].Path.LocalPath;
+            var path = folders[0].TryGetLocalPath() ?? folders[0].Path.LocalPath;
+            Vm.EditingProfile.SourcePath = path;
+            SourcePathBox.Text = path;
             Vm.MarkDirty();
         }
     }
