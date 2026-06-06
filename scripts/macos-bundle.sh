@@ -1,39 +1,42 @@
 #!/usr/bin/env bash
 # Creates a macOS .app bundle for NestVault.
-# Usage: ./scripts/macos-bundle.sh [arm64|x64] [version]
-# Example: ./scripts/macos-bundle.sh arm64 3.0.0
+# Usage: ./scripts/macos-bundle.sh [arm64|x64|all] [version]
+# Examples:
+#   ./scripts/macos-bundle.sh             # builds arm64 + x64
+#   ./scripts/macos-bundle.sh arm64 3.0.0
+#   ./scripts/macos-bundle.sh x64   3.0.0
 
 set -euo pipefail
 
-ARCH=${1:-arm64}
+ARCH=${1:-all}
 VERSION=${2:-3.0.0}
-RID="osx-${ARCH}"
 PROJECT="NestVault_Linux/NestVault_Linux.csproj"
-PUBLISH_DIR="publish/${RID}"
-BUNDLE_NAME="NestVault.app"
-BUNDLE_DIR="${PUBLISH_DIR}/${BUNDLE_NAME}"
 
-echo "→ Publishing ${RID} v${VERSION}..."
-dotnet publish "$PROJECT" \
-  -c Release -r "$RID" --self-contained true \
-  -p:PublishSingleFile=true \
-  -p:Version="$VERSION" \
-  -o "$PUBLISH_DIR"
+build_bundle() {
+    local arch="$1"
+    local rid="osx-${arch}"
+    local publish_dir="publish/${rid}"
+    local bundle_dir="${publish_dir}/NestVault.app"
+    local archive="NestVault-macos-${arch}-v${VERSION}.tar.gz"
 
-echo "→ Creating .app bundle..."
-rm -rf "${BUNDLE_DIR}"
-mkdir -p "${BUNDLE_DIR}/Contents/MacOS"
-mkdir -p "${BUNDLE_DIR}/Contents/Resources"
+    echo "→ Publishing ${rid} v${VERSION}..."
+    dotnet publish "$PROJECT" \
+      -c Release -r "$rid" --self-contained true \
+      -p:PublishSingleFile=true \
+      -p:Version="$VERSION" \
+      -o "$publish_dir"
 
-# Binary
-cp "${PUBLISH_DIR}/NestVault_Linux" "${BUNDLE_DIR}/Contents/MacOS/NestVault"
-chmod +x "${BUNDLE_DIR}/Contents/MacOS/NestVault"
+    echo "→ Creating .app bundle (${arch})..."
+    rm -rf "${bundle_dir}"
+    mkdir -p "${bundle_dir}/Contents/MacOS"
+    mkdir -p "${bundle_dir}/Contents/Resources"
 
-# Icon
-cp "NestVault_Linux/Assets/AppIcon.icns" "${BUNDLE_DIR}/Contents/Resources/AppIcon.icns"
+    cp "${publish_dir}/NestVault_Linux" "${bundle_dir}/Contents/MacOS/NestVault"
+    chmod +x "${bundle_dir}/Contents/MacOS/NestVault"
 
-# Info.plist
-cat > "${BUNDLE_DIR}/Contents/Info.plist" <<PLIST
+    cp "NestVault_Linux/Assets/AppIcon.icns" "${bundle_dir}/Contents/Resources/AppIcon.icns"
+
+    cat > "${bundle_dir}/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -53,12 +56,26 @@ cat > "${BUNDLE_DIR}/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-echo "→ Signing ad-hoc..."
-codesign --deep --force --sign - "${BUNDLE_DIR}"
+    echo "→ Signing ad-hoc (${arch})..."
+    codesign --deep --force --sign - "${bundle_dir}"
 
-echo "→ Packaging..."
-ARCHIVE="NestVault-macos-${ARCH}-v${VERSION}.tar.gz"
-tar -czf "$ARCHIVE" -C "$PUBLISH_DIR" "$BUNDLE_NAME"
+    echo "→ Packaging (${arch})..."
+    tar -czf "$archive" -C "$publish_dir" "NestVault.app"
 
-echo "✓ Done: ${ARCHIVE}"
-echo "  Bundle: ${BUNDLE_DIR}"
+    echo "✓ Done: ${archive}"
+    echo "  Bundle: ${bundle_dir}"
+}
+
+case "$ARCH" in
+    all)
+        build_bundle arm64
+        build_bundle x64
+        ;;
+    arm64|x64)
+        build_bundle "$ARCH"
+        ;;
+    *)
+        echo "Usage: $0 [arm64|x64|all] [version]" >&2
+        exit 1
+        ;;
+esac
