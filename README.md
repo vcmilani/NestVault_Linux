@@ -1,6 +1,6 @@
-# NestVault — Linux Client
+# NestVault — Linux / macOS Client
 
-Native Linux client for the [NestVault](https://github.com/vcmilani/NestVault) self-hosted backup server, built with Avalonia UI 11 and C# 12 / .NET 8.
+Cross-platform desktop client for the [NestVault](https://github.com/vcmilani/NestVault) self-hosted backup server, built with Avalonia UI 12 and .NET 10.
 
 ---
 
@@ -9,8 +9,9 @@ Native Linux client for the [NestVault](https://github.com/vcmilani/NestVault) s
 | Item | Minimum |
 |------|---------|
 | Linux | Ubuntu 22.04 / Fedora 39 / any modern distro |
-| .NET | 8.0 SDK |
-| Desktop | X11 or Wayland (XWayland) |
+| macOS | 12 Monterey or later |
+| .NET | 10.0 SDK |
+| Desktop (Linux) | X11 or Wayland (XWayland) |
 | Server | backup_files v2.6+ |
 
 ---
@@ -21,7 +22,7 @@ Native Linux client for the [NestVault](https://github.com/vcmilani/NestVault) s
 NestVault_Linux/
 ├── NestVault_Linux.sln
 └── NestVault_Linux/
-    ├── NestVault_Linux.csproj   # net8.0, Avalonia UI 11.2.3
+    ├── NestVault_Linux.csproj   # net10.0, Avalonia UI 12.0.4
     ├── App.axaml + .axaml.cs    # TrayIcon (Avalonia built-in), static services
     ├── MainWindow.axaml + .axaml.cs  # Grid nav pane + ContentControl navigation
     ├── Models/
@@ -35,7 +36,7 @@ NestVault_Linux/
     │   ├── PowerMonitor.cs      # Battery + network (/sys/class/power_supply/)
     │   ├── StartupManager.cs    # Auto-start via XDG autostart .desktop
     │   ├── ToastHelper.cs       # Notifications via notify-send
-    │   └── TaskbarProgressHelper.cs  # Stub (no universal Linux API)
+    │   └── TaskbarProgressHelper.cs  # Stub (no universal Linux/macOS API)
     ├── ViewModels/
     │   ├── DashboardViewModel.cs
     │   ├── BackupsViewModel.cs
@@ -60,8 +61,8 @@ NestVault_Linux/
     │   ├── en-US/Resources.resw
     │   └── pt-BR/Resources.resw
     └── Assets/
-        ├── app.png    # 256×256 PNG
-        └── tray.png   # 32×32 PNG
+        ├── app.png    # 256×256 PNG — window icon
+        └── tray.png   # 32×32 PNG — system tray / menu bar icon
 ```
 
 ---
@@ -71,8 +72,8 @@ NestVault_Linux/
 ### System Dependencies (Ubuntu/Debian)
 
 ```bash
-# .NET 8 SDK
-sudo apt install dotnet-sdk-8.0
+# .NET 10 SDK
+sudo apt install dotnet-sdk-10.0
 
 # Avalonia runtime dependencies
 sudo apt install libx11-dev libice-dev libsm-dev libxext-dev \
@@ -89,8 +90,15 @@ sudo apt install libnotify-bin   # provides notify-send
 ### System Dependencies (Fedora)
 
 ```bash
-sudo dnf install dotnet-sdk-8.0 libX11-devel fontconfig freetype \
+sudo dnf install dotnet-sdk-10.0 libX11-devel fontconfig freetype \
                  libappindicator-gtk3 libnotify
+```
+
+### System Dependencies (macOS)
+
+```bash
+# Install .NET 10 SDK from https://dotnet.microsoft.com/download
+# No additional dependencies required — Avalonia runs natively on macOS
 ```
 
 ### Build and Run
@@ -108,9 +116,20 @@ Open the project folder in VS Code. The `.vscode/` directory contains pre-config
 ### Publish (self-contained)
 
 ```bash
+# Linux x64
 dotnet publish NestVault_Linux/NestVault_Linux.csproj \
   -c Release -r linux-x64 --self-contained true \
   -o publish/linux-x64
+
+# macOS arm64 (Apple Silicon)
+dotnet publish NestVault_Linux/NestVault_Linux.csproj \
+  -c Release -r osx-arm64 --self-contained true \
+  -o publish/osx-arm64
+
+# macOS x64 (Intel)
+dotnet publish NestVault_Linux/NestVault_Linux.csproj \
+  -c Release -r osx-x64 --self-contained true \
+  -o publish/osx-x64
 ```
 
 ---
@@ -157,29 +176,30 @@ dotnet publish NestVault_Linux/NestVault_Linux.csproj \
 ### System Tray
 - Minimize to tray on close (Avalonia built-in `TrayIcon`)
 - Context menu: Open NestVault / Quit
-- Desktop notifications via `notify-send` after each backup
+- Desktop notifications via `notify-send` after each backup (Linux)
+- Menu bar icon on macOS
 
 ### Settings
 - **General:** startup toggle (XDG autostart), network status, battery/power source
 - **Server:** URL and API Key, test connection
 - **Queue Schedule:** schedule settings
-- **About:** version, links
+- **About:** version
 
 ---
 
 ## Platform-Specific Implementation
 
-| Feature | Implementation |
-|---------|---------------|
-| Tray icon | Avalonia built-in `TrayIcon` |
-| Notifications | `notify-send` subprocess |
-| Taskbar progress | Not supported (stub) |
-| Auto-start | `~/.config/autostart/nestvault.desktop` (XDG autostart spec) |
-| Battery | `/sys/class/power_supply/BAT0/capacity` + `/AC/online` (sysfs) |
-| Network | `NetworkInterface.GetAllNetworkInterfaces()` |
-| Folder picker | `IStorageProvider.OpenFolderPickerAsync()` |
-| UI dispatch | `Dispatcher.UIThread.InvokeAsync` |
-| Config storage | `~/.config/NestVault/config.json` (`SpecialFolder.ApplicationData`) |
+| Feature | Linux | macOS |
+|---------|-------|-------|
+| Tray icon | Avalonia `TrayIcon` + libappindicator | Avalonia `TrayIcon` (menu bar) |
+| Notifications | `notify-send` subprocess | — (stub) |
+| Taskbar progress | Not supported (stub) | Not supported (stub) |
+| Auto-start | `~/.config/autostart/nestvault.desktop` (XDG) | — (stub) |
+| Battery | `/sys/class/power_supply/BAT0/` (sysfs) | `PowerMonitor` (cross-platform) |
+| Network | `NetworkInterface.GetAllNetworkInterfaces()` | same |
+| Folder picker | `IStorageProvider.OpenFolderPickerAsync()` | same |
+| UI dispatch | `Dispatcher.UIThread.InvokeAsync` | same |
+| Config storage | `~/.config/NestVault/config.json` | `~/Library/Preferences/NestVault/` |
 
 ---
 
@@ -205,7 +225,9 @@ dotnet publish NestVault_Linux/NestVault_Linux.csproj \
 
 ## Local Persistence
 
-Profiles and settings are stored as JSON in `~/.config/NestVault/config.json` via `ConfigStore` (`Environment.SpecialFolder.ApplicationData` resolves to `~/.config` on Linux).
+Profiles and settings are stored as JSON via `ConfigStore` using `Environment.SpecialFolder.ApplicationData`:
+- **Linux:** `~/.config/NestVault/config.json`
+- **macOS:** `~/Library/Preferences/NestVault/config.json`
 
 ---
 
@@ -219,9 +241,9 @@ Supported languages: **English** (default) and **Brazilian Portuguese**. The app
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| Window doesn't open | Missing X11/Wayland libs | Install `libx11-dev libfontconfig1` |
-| Tray icon missing | No appindicator support | `sudo apt install libappindicator3-1` |
-| No notifications | `notify-send` not installed | `sudo apt install libnotify-bin` |
+| Window doesn't open (Linux) | Missing X11/Wayland libs | Install `libx11-dev libfontconfig1` |
+| Tray icon missing (Linux) | No appindicator support | `sudo apt install libappindicator3-1` |
+| No notifications (Linux) | `notify-send` not installed | `sudo apt install libnotify-bin` |
 | Battery always shows 0% | Non-standard sysfs path | Check `/sys/class/power_supply/` for your battery name |
 | Connection refused | Server offline | `systemctl status backup-server` on the server host |
 
