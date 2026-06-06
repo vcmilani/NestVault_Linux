@@ -115,22 +115,86 @@ Open the project folder in VS Code. The `.vscode/` directory contains pre-config
 
 ### Publish (self-contained)
 
+Gera um binário único que não depende do .NET instalado na máquina do usuário. Substitua `1.0.0` pela versão desejada.
+
+#### Linux x64
+
 ```bash
-# Linux x64
 dotnet publish NestVault_Linux/NestVault_Linux.csproj \
   -c Release -r linux-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:Version=1.0.0 \
   -o publish/linux-x64
 
-# macOS arm64 (Apple Silicon)
+tar -czf NestVault-linux-x64.tar.gz -C publish/linux-x64 .
+```
+
+#### Linux ARM64
+
+```bash
+dotnet publish NestVault_Linux/NestVault_Linux.csproj \
+  -c Release -r linux-arm64 --self-contained true \
+  -p:PublishSingleFile=true -p:Version=1.0.0 \
+  -o publish/linux-arm64
+
+tar -czf NestVault-linux-arm64.tar.gz -C publish/linux-arm64 .
+```
+
+> Cross-compilation funciona sem configuração extra — é possível gerar o binário ARM64 em uma máquina x64 e vice-versa.
+
+#### macOS ARM64 (Apple Silicon)
+
+```bash
 dotnet publish NestVault_Linux/NestVault_Linux.csproj \
   -c Release -r osx-arm64 --self-contained true \
+  -p:PublishSingleFile=true -p:Version=1.0.0 \
   -o publish/osx-arm64
 
-# macOS x64 (Intel)
+# Assinatura ad-hoc (evita quarentena do Gatekeeper)
+codesign --deep --force --sign - publish/osx-arm64/NestVault_Linux
+
+tar -czf NestVault-macos-arm64.tar.gz -C publish/osx-arm64 .
+```
+
+#### macOS x64 (Intel)
+
+```bash
 dotnet publish NestVault_Linux/NestVault_Linux.csproj \
   -c Release -r osx-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:Version=1.0.0 \
   -o publish/osx-x64
+
+codesign --deep --force --sign - publish/osx-x64/NestVault_Linux
+
+tar -czf NestVault-macos-x64.tar.gz -C publish/osx-x64 .
 ```
+
+#### Windows x64
+
+```powershell
+dotnet publish NestVault_Linux/NestVault_Linux.csproj `
+  -c Release -r win-x64 --self-contained true `
+  -p:PublishSingleFile=true -p:Version=1.0.0 `
+  -o publish/win-x64
+
+Compress-Archive -Path publish/win-x64/* -DestinationPath NestVault-win-x64.zip
+```
+
+#### Windows ARM64
+
+```powershell
+dotnet publish NestVault_Linux/NestVault_Linux.csproj `
+  -c Release -r win-arm64 --self-contained true `
+  -p:PublishSingleFile=true -p:Version=1.0.0 `
+  -o publish/win-arm64
+
+Compress-Archive -Path publish/win-arm64/* -DestinationPath NestVault-win-arm64.zip
+```
+
+> **Nota macOS:** sem um Developer ID da Apple, o Gatekeeper pode bloquear o binário ao abrir pela primeira vez. A assinatura ad-hoc (`codesign --sign -`) resolve na maioria dos casos. Caso ainda seja bloqueado, o usuário pode rodar `xattr -d com.apple.quarantine NestVault_Linux` no terminal.
+
+#### Automatizado via CI
+
+Ao criar uma tag no formato `vX.X.X`, o GitHub Actions gera e publica os 6 artefatos automaticamente. Veja [`.github/workflows/release.yml`](.github/workflows/release.yml).
 
 ---
 
