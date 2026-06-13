@@ -25,16 +25,16 @@ public partial class BackupRunner : ObservableObject
     public record LogEntry(string Text, LogKind Kind);
     public enum LogKind { Info, Success, Warning, Error }
 
-    public class RunStats
+    public record RunStats
     {
-        public int Total      { get; set; }
-        public int Uploaded   { get; set; }
-        public int Registered { get; set; }
-        public int Cached     { get; set; }
-        public int Ignored    { get; set; }
-        public int Errors     { get; set; }
-        public int Inherited  { get; set; }
-        public int Skipped    { get; set; }
+        public int Total      { get; init; }
+        public int Uploaded   { get; init; }
+        public int Registered { get; init; }
+        public int Cached     { get; init; }
+        public int Ignored    { get; init; }
+        public int Errors     { get; init; }
+        public int Inherited  { get; init; }
+        public int Skipped    { get; init; }
     }
 
     [ObservableProperty] private RunStatus _status = RunStatus.Idle;
@@ -130,7 +130,7 @@ public partial class BackupRunner : ObservableObject
             Status = RunStatus.Failed; return;
         }
 
-        Stats.Total = scannedFiles.Count;
+        Stats = Stats with { Total = scannedFiles.Count };
         Log($"Files found: {scannedFiles.Count}", LogKind.Info);
 
         // Smart skip
@@ -149,8 +149,7 @@ public partial class BackupRunner : ObservableObject
                     var result = await _api.AbsorbAsync(label, versionKey, prevDoneKey, _session, ct);
                     if (result is not null)
                     {
-                        Stats.Inherited = result.Inherited;
-                        Stats.Skipped   = result.Skipped;
+                        Stats = Stats with { Inherited = result.Inherited, Skipped = result.Skipped };
                         Log($"Absorb done: {result.Inherited} inherited, {result.Skipped} skipped.", LogKind.Success);
                     }
                 }
@@ -237,7 +236,7 @@ public partial class BackupRunner : ObservableObject
             catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                var s = Stats; s.Errors++;
+                Stats = Stats with { Errors = Stats.Errors + 1 };
                 Log($"Hash error: {entry.Path} — {ex.Message}", LogKind.Error);
             }
             finally { sem.Release(); }
@@ -347,13 +346,13 @@ public partial class BackupRunner : ObservableObject
 
                 lock (statsLock)
                 {
-                    switch (actionStr)
+                    Stats = actionStr switch
                     {
-                        case "upload":   Stats.Uploaded++;   break;
-                        case "register": Stats.Registered++; break;
-                        case "cached":   Stats.Cached++;     break;
-                        default:         Stats.Ignored++;    break;
-                    }
+                        "upload"   => Stats with { Uploaded   = Stats.Uploaded   + 1 },
+                        "register" => Stats with { Registered = Stats.Registered + 1 },
+                        "cached"   => Stats with { Cached     = Stats.Cached     + 1 },
+                        _          => Stats with { Ignored    = Stats.Ignored    + 1 },
+                    };
                 }
                 var done = Interlocked.Increment(ref phase2Done);
                 Progress    = phase2Start + (double)done / Math.Max(totalWork, 1) * (1.0 - phase2Start);
@@ -362,7 +361,7 @@ public partial class BackupRunner : ObservableObject
             catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                lock (statsLock) { Stats.Errors++; }
+                lock (statsLock) { Stats = Stats with { Errors = Stats.Errors + 1 }; }
                 Log($"File error: {item.Path} — {ex.Message}", LogKind.Error);
             }
             finally { execSem.Release(); }
@@ -398,8 +397,7 @@ public partial class BackupRunner : ObservableObject
                     var result = await _api.AbsorbAsync(label, versionKey, prevDoneKey, _session, ct);
                     if (result is not null)
                     {
-                        Stats.Inherited = result.Inherited;
-                        Stats.Skipped   = result.Skipped;
+                        Stats = Stats with { Inherited = result.Inherited, Skipped = result.Skipped };
                         Log($"Absorb done: {result.Inherited} inherited, {result.Skipped} skipped.", LogKind.Success);
                     }
                 }
