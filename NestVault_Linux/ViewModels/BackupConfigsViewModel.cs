@@ -14,15 +14,58 @@ public partial class BackupConfigsViewModel : ObservableObject
     private readonly ConfigStore _store;
 
     [ObservableProperty] private List<BackupProfile> _profiles = [];
-    [ObservableProperty] private BackupProfile?      _selectedProfile;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsViewMode), nameof(CanRunProfile), nameof(ScheduleSummary),
+                              nameof(ServerOverrideDisplay), nameof(PrefixDisplay))]
+    private BackupProfile? _selectedProfile;
+
     [ObservableProperty] private BackupProfile?      _editingProfile;
-    [ObservableProperty] private bool                _isEditing;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsViewMode))]
+    private bool _isEditing;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsViewMode))]
+    private bool _isEditMode;
+
     [ObservableProperty] private bool                _isDirty;
+
+    public bool IsViewMode => IsEditing && !IsEditMode;
     [ObservableProperty] private string              _testConnectionStatus = "";
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotTestingConnection))]
     private bool _isTestingConnection;
     public bool IsNotTestingConnection => !IsTestingConnection;
+
+    public bool CanRunProfile =>
+        SelectedProfile?.Enabled == true &&
+        !string.IsNullOrEmpty(SelectedProfile.SourcePath) &&
+        !string.IsNullOrEmpty(SelectedProfile.Label);
+
+    public string ScheduleSummary
+    {
+        get
+        {
+            var s = SelectedProfile?.Schedule;
+            if (s is null || !s.Enabled) return "";
+            return s.Frequency switch
+            {
+                BackupSchedule.ScheduleFrequency.Hourly => "Runs hourly",
+                BackupSchedule.ScheduleFrequency.Daily  => $"Runs daily at {s.Hour:D2}:{s.Minute:D2}",
+                BackupSchedule.ScheduleFrequency.Weekly => $"Runs weekly at {s.Hour:D2}:{s.Minute:D2}",
+                BackupSchedule.ScheduleFrequency.Custom => $"Every {s.CustomMinutes} min",
+                _                                       => ""
+            };
+        }
+    }
+
+    public string ServerOverrideDisplay =>
+        string.IsNullOrEmpty(SelectedProfile?.ServerOverride) ? "(global)" : SelectedProfile.ServerOverride;
+
+    public string PrefixDisplay =>
+        string.IsNullOrEmpty(SelectedProfile?.Prefix) ? "none" : SelectedProfile.Prefix;
     [ObservableProperty] private string              _newExclude = "";
     [ObservableProperty] private string              _cliImportText = "";
     [ObservableProperty] private string?             _cliImportError;
@@ -41,6 +84,7 @@ public partial class BackupConfigsViewModel : ObservableObject
 
     partial void OnSelectedProfileChanged(BackupProfile? value)
     {
+        IsEditMode = false;
         if (value is null) { IsEditing = false; EditingProfile = null; return; }
         EditingProfile = CloneProfile(value);
         IsEditing      = true;
@@ -49,6 +93,9 @@ public partial class BackupConfigsViewModel : ObservableObject
     }
 
     // MARK: - CRUD
+
+    [RelayCommand]
+    private void EditProfile() => IsEditMode = true;
 
     [RelayCommand]
     private void AddProfile()
@@ -76,7 +123,8 @@ public partial class BackupConfigsViewModel : ObservableObject
     {
         if (EditingProfile is null) return;
         _store.Update(EditingProfile);
-        IsDirty = false;
+        IsDirty    = false;
+        IsEditMode = false;
     }
 
     [RelayCommand]
@@ -85,6 +133,7 @@ public partial class BackupConfigsViewModel : ObservableObject
         if (SelectedProfile is null) return;
         EditingProfile = CloneProfile(SelectedProfile);
         IsDirty        = false;
+        IsEditMode     = false;
     }
 
     public void MarkDirty() => IsDirty = true;
