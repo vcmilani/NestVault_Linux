@@ -72,6 +72,9 @@ public partial class BackupRunnerViewModel : ObservableObject
             updated.LastFullBackupDate = DateTimeOffset.Now;
         _store.Update(updated);
 
+        if (_runner.Status == BackupRunner.RunStatus.Done)
+            await _api.FetchBackupsAsync();
+
         _scheduler.ClearManualRunner(_runner);
         CanCancel = false;
 

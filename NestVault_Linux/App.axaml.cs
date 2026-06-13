@@ -33,6 +33,8 @@ public partial class App : Application
         Runner    = new BackupRunner(Api);
         Scheduler = new ScheduleManager(Api, Config, Power);
 
+        DesktopIntegration.EnsureInstalled();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;

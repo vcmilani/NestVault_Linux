@@ -17,21 +17,24 @@
             <DockPanel>
 
                 <!-- App Title -->
-                <Border DockPanel.Dock="Top" Padding="16,20,16,12">
+                <Border DockPanel.Dock="Top" Padding="16,22,16,18">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="🏛" FontSize="20"/>
+                        <TextBlock Text="💾" FontSize="22"/>
                         <TextBlock Text="NestVault" FontSize="16" FontWeight="SemiBold"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
 
+                <!-- Separator -->
+                <Border DockPanel.Dock="Top" Height="1" Margin="14,0"
+                        Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+
                 <!-- Settings Footer -->
                 <ListBox x:Name="FooterNav"
+                         Classes="NavList"
                          DockPanel.Dock="Bottom"
-                         SelectionChanged="FooterNav_SelectionChanged"
-                         Background="Transparent"
-                         Padding="8,8">
-                    <ListBoxItem Tag="settings" Padding="8,8">
+                         SelectionChanged="FooterNav_SelectionChanged">
+                    <ListBoxItem Tag="settings">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="⚙" FontSize="14"/>
                             <TextBlock Text="Settings" VerticalAlignment="Center"/>
@@ -39,31 +42,34 @@
                     </ListBoxItem>
                 </ListBox>
 
+                <!-- Footer separator -->
+                <Border DockPanel.Dock="Bottom" Height="1" Margin="14,0"
+                        Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+
                 <!-- Main Nav -->
                 <ListBox x:Name="MainNav"
+                         Classes="NavList"
                          DockPanel.Dock="Top"
-                         SelectionChanged="MainNav_SelectionChanged"
-                         Background="Transparent"
-                         Padding="8,0">
-                    <ListBoxItem Tag="dashboard" Padding="8,8">
+                         SelectionChanged="MainNav_SelectionChanged">
+                    <ListBoxItem Tag="dashboard">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="⌂" FontSize="14"/>
                             <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Tag="backups" Padding="8,8">
+                    <ListBoxItem Tag="backups">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="⬡" FontSize="14"/>
                             <TextBlock Text="Backups" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Tag="mybackups" Padding="8,8">
+                    <ListBoxItem Tag="mybackups">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="🛡" FontSize="14"/>
                             <TextBlock Text="My Backups" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
-                    <ListBoxItem Tag="cleanup" Padding="8,8">
+                    <ListBoxItem Tag="cleanup">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="🗑" FontSize="14"/>
                             <TextBlock Text="Cleanup" VerticalAlignment="Center"/>

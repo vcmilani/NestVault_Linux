@@ -5,106 +5,106 @@
              x:Class="NestVault_Linux.Views.CleanupPage"
              x:DataType="vm:CleanupViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
+    <Grid Margin="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Left panel: Settings -->
-        <ScrollViewer Grid.Column="0" Grid.RowSpan="2">
-            <StackPanel Spacing="16">
+        <!-- Left panel: Controls in card -->
+        <Border Grid.Column="0" Classes="CardElevated" Padding="0">
+            <ScrollViewer Padding="16">
+                <StackPanel Spacing="16">
 
-                <TextBlock Text="Cleanup" FontSize="22" FontWeight="Bold"/>
+                    <TextBlock Text="Cleanup" FontSize="22" FontWeight="Bold"/>
 
-                <!-- Target -->
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Target" Classes="SectionHeader"/>
-                    <RadioButton GroupName="CleanupTarget" Content="All Backups"
-                                 IsChecked="{CompiledBinding Target, Converter={x:Static ObjectConverters.IsNull}}"
-                                 Click="TargetAll_Click"/>
-                    <RadioButton GroupName="CleanupTarget" Content="Specific Backup"
-                                 IsChecked="{CompiledBinding IsSpecificTarget}"
-                                 Click="TargetSpecific_Click"/>
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Target" Classes="SectionHeader"/>
+                        <RadioButton GroupName="CleanupTarget" Content="All Backups"
+                                     IsChecked="{CompiledBinding Target, Converter={x:Static ObjectConverters.IsNull}}"
+                                     Click="TargetAll_Click"/>
+                        <RadioButton GroupName="CleanupTarget" Content="Specific Backup"
+                                     IsChecked="{CompiledBinding IsSpecificTarget}"
+                                     Click="TargetSpecific_Click"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4" IsVisible="{CompiledBinding IsSpecificTarget}">
+                        <TextBlock Text="Backup Label" Classes="SectionHeader"/>
+                        <ComboBox ItemsSource="{CompiledBinding AvailableBackups}"
+                                  SelectedValue="{CompiledBinding SelectedLabel}"
+                                  SelectedValueBinding="{Binding Label}"
+                                  MinWidth="200">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:BackupSummary">
+                                    <TextBlock Text="{CompiledBinding Label}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Keep last N versions" Classes="SectionHeader"/>
+                        <NumericUpDown Value="{CompiledBinding KeepCount}" Minimum="1" Maximum="100"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{CompiledBinding Error}"
+                               Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                               IsVisible="{CompiledBinding HasError}"
+                               TextWrapping="Wrap"/>
+
+                    <StackPanel Spacing="8">
+                        <Button Content="↻ Refresh Preview"
+                                Command="{CompiledBinding RefreshPreviewCommand}"
+                                IsEnabled="{CompiledBinding !IsLoadingPreview}"
+                                HorizontalAlignment="Stretch"/>
+                        <Button Content="Run Cleanup"
+                                Command="{CompiledBinding RunCleanupCommand}"
+                                IsEnabled="{CompiledBinding !IsRunning}"
+                                HorizontalAlignment="Stretch"
+                                Click="RunCleanup_Click"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Right panel: Preview / Results in card -->
+        <Border Grid.Column="2" Classes="CardElevated" Padding="0">
+            <StackPanel Spacing="0">
+
+                <StackPanel Margin="16,14,16,10">
+                    <TextBlock Text="Preview — Versions to Remove" Classes="SectionHeader" Margin="0"/>
+                    <ProgressBar IsIndeterminate="True" Height="2" Margin="0,8,0,0"
+                                 IsVisible="{CompiledBinding IsLoadingPreview}"/>
                 </StackPanel>
 
-                <!-- Label picker -->
-                <StackPanel Spacing="4" IsVisible="{CompiledBinding IsSpecificTarget}">
-                    <TextBlock Text="Backup Label" Classes="SectionHeader"/>
-                    <ComboBox ItemsSource="{CompiledBinding AvailableBackups}"
-                              SelectedValue="{CompiledBinding SelectedLabel}"
-                              SelectedValueBinding="{Binding Label}"
-                              MinWidth="200">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:BackupSummary">
-                                <TextBlock Text="{CompiledBinding Label}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </StackPanel>
-
-                <!-- Keep count -->
-                <StackPanel Spacing="4">
-                    <TextBlock Text="Keep last N versions" Classes="SectionHeader"/>
-                    <NumericUpDown Value="{CompiledBinding KeepCount}" Minimum="1" Maximum="100"/>
-                </StackPanel>
-
-                <!-- Error -->
-                <TextBlock Text="{CompiledBinding Error}"
-                           Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                           IsVisible="{CompiledBinding HasError}"
-                           TextWrapping="Wrap"/>
-
-                <!-- Buttons -->
-                <StackPanel Spacing="8">
-                    <Button Content="↻ Refresh Preview"
-                            Command="{CompiledBinding RefreshPreviewCommand}"
-                            IsEnabled="{CompiledBinding !IsLoadingPreview}"
-                            HorizontalAlignment="Stretch"/>
-                    <Button Content="Run Cleanup"
-                            Command="{CompiledBinding RunCleanupCommand}"
-                            IsEnabled="{CompiledBinding !IsRunning}"
-                            HorizontalAlignment="Stretch"
-                            Click="RunCleanup_Click"/>
-                </StackPanel>
-
-            </StackPanel>
-        </ScrollViewer>
-
-        <!-- Right panel: Preview / Results -->
-        <StackPanel Grid.Column="2" Grid.RowSpan="2" Spacing="12">
-
-            <TextBlock Text="Preview — Versions to Remove" Classes="SectionHeader"/>
-            <ProgressBar IsIndeterminate="True" Height="2"
-                         IsVisible="{CompiledBinding IsLoadingPreview}"/>
-
-            <DataGrid ItemsSource="{CompiledBinding Preview}"
-                      AutoGenerateColumns="False" IsReadOnly="True"
-                      CanUserReorderColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Label"    Binding="{Binding Label}"         Width="*"/>
-                    <DataGridTextColumn Header="Total"    Binding="{Binding TotalVersions}"  Width="60"/>
-                    <DataGridTextColumn Header="Remove"   Binding="{Binding ToRemove}"       Width="60"/>
-                </DataGrid.Columns>
-            </DataGrid>
-
-            <!-- Results after run -->
-            <StackPanel IsVisible="{CompiledBinding Results, Converter={StaticResource CountToVisibilityConverter}}"
-                        Spacing="8">
-                <TextBlock Text="Results" Classes="SectionHeader"/>
-                <DataGrid ItemsSource="{CompiledBinding ResultItems}"
-                          AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid ItemsSource="{CompiledBinding Preview}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserReorderColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Label"    Binding="{Binding Label}"                Width="*"/>
-                        <DataGridTextColumn Header="Removed"  Binding="{Binding Removed}"              Width="70"/>
-                        <DataGridTextColumn Header="Kept"     Binding="{Binding Kept}"                 Width="60"/>
-                        <DataGridTextColumn Header="Storage"  Binding="{Binding StorageFilesRemoved}"  Width="70"/>
+                        <DataGridTextColumn Header="Label"  Binding="{Binding Label}"        Width="*"/>
+                        <DataGridTextColumn Header="Total"  Binding="{Binding TotalVersions}" Width="60"/>
+                        <DataGridTextColumn Header="Remove" Binding="{Binding ToRemove}"      Width="60"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
 
-        </StackPanel>
+                <StackPanel IsVisible="{CompiledBinding Results, Converter={StaticResource CountToVisibilityConverter}}"
+                            Spacing="0" Margin="0,8,0,0">
+                    <TextBlock Text="Results" Classes="SectionHeader" Margin="16,0"/>
+                    <DataGrid ItemsSource="{CompiledBinding ResultItems}"
+                              AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Label"   Binding="{Binding Label}"               Width="*"/>
+                            <DataGridTextColumn Header="Removed" Binding="{Binding Removed}"             Width="70"/>
+                            <DataGridTextColumn Header="Kept"    Binding="{Binding Kept}"                Width="60"/>
+                            <DataGridTextColumn Header="Storage" Binding="{Binding StorageFilesRemoved}" Width="70"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
 
     </Grid>
 

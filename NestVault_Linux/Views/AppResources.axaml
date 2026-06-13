@@ -7,29 +7,69 @@
         <conv:BoolNegToVisibilityConverter x:Key="BoolNegToVisibilityConverter"/>
         <conv:BoolNegateConverter          x:Key="BoolNegateConverter"/>
         <conv:CountToVisibilityConverter   x:Key="CountToVisibilityConverter"/>
+        <conv:StringNotEmptyConverter      x:Key="StringNotEmptyConverter"/>
         <conv:BoolToGreenRedColorConverter x:Key="BoolToGreenRedColorConverter"/>
         <conv:BoolToRedBrushConverter      x:Key="BoolToRedBrushConverter"/>
         <conv:LogKindToColorBrushConverter x:Key="LogKindToColorBrushConverter"/>
     </Styles.Resources>
 
+    <!-- Typography -->
     <Style Selector="TextBlock.SectionHeader">
-        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="FontSize"   Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Opacity"    Value="0.7"/>
+        <Setter Property="Opacity"    Value="0.6"/>
         <Setter Property="Margin"     Value="0,12,0,4"/>
     </Style>
 
+    <!-- Cards -->
     <Style Selector="Border.Card">
-        <Setter Property="CornerRadius"    Value="8"/>
-        <Setter Property="Padding"         Value="16"/>
-        <Setter Property="Margin"          Value="4"/>
-        <Setter Property="Background"      Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding"      Value="16"/>
+        <Setter Property="Margin"       Value="4"/>
+        <Setter Property="Background"   Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
     </Style>
 
+    <Style Selector="Border.CardElevated">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding"      Value="16"/>
+        <Setter Property="Margin"       Value="4"/>
+        <Setter Property="Background"   Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
+        <Setter Property="BoxShadow"    Value="0 2 12 0 #1A000000"/>
+    </Style>
+
+    <!-- Divider -->
     <Style Selector="Border.Divider">
-        <Setter Property="Width"           Value="1"/>
-        <Setter Property="Background"      Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-        <Setter Property="Margin"          Value="0"/>
+        <Setter Property="Width"      Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="Margin"     Value="0"/>
+    </Style>
+
+    <!-- Status Pills -->
+    <Style Selector="Border.Pill">
+        <Setter Property="CornerRadius" Value="20"/>
+        <Setter Property="Padding"      Value="8,3"/>
+        <Setter Property="Background"   Value="#20808080"/>
+    </Style>
+    <Style Selector="Border.Pill.Green">
+        <Setter Property="Background" Value="#2034C759"/>
+    </Style>
+    <Style Selector="Border.Pill.Red">
+        <Setter Property="Background" Value="#20FF453A"/>
+    </Style>
+    <Style Selector="Border.Pill.Gray">
+        <Setter Property="Background" Value="#18808080"/>
+    </Style>
+
+    <!-- Sidebar NavList -->
+    <Style Selector="ListBox.NavList">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding"    Value="8,4"/>
+    </Style>
+
+    <Style Selector="ListBox.NavList ListBoxItem">
+        <Setter Property="Padding"      Value="12,9"/>
+        <Setter Property="Margin"       Value="0,1"/>
+        <Setter Property="CornerRadius" Value="6"/>
     </Style>
 
 </Styles>

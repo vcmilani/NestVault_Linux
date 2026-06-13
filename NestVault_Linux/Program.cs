@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.X11;
 using System;
 
 namespace NestVault_Linux;
@@ -12,5 +13,6 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
+            .With(new X11PlatformOptions { WmClass = "nestvault" })
             .LogToTrace();
 }

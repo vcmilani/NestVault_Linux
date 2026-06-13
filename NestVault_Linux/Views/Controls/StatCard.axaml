@@ -3,11 +3,13 @@
              x:Class="NestVault_Linux.Views.Controls.StatCard"
              x:Name="Root">
 
-    <Border Classes="Card" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-            CornerRadius="8" Padding="16" Margin="4">
-        <StackPanel Spacing="4">
+    <Border Classes="CardElevated">
+        <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Icon, ElementName=Root}"
+                       FontSize="22" Opacity="0.75"
+                       IsVisible="{Binding Icon, ElementName=Root, Converter={StaticResource StringNotEmptyConverter}}"/>
             <TextBlock Text="{Binding Value, ElementName=Root}"
-                       FontSize="26" FontWeight="Bold"/>
+                       FontSize="28" FontWeight="Bold"/>
             <TextBlock Text="{Binding Title, ElementName=Root}"
                        FontSize="13" FontWeight="SemiBold" Opacity="0.85"/>
             <TextBlock Text="{Binding Subtitle, ElementName=Root}"

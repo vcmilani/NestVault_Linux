@@ -34,6 +34,14 @@ public sealed class BoolNegateConverter : IValueConverter
         => value is bool b && !b;
 }
 
+// string → bool (IsVisible when not null/empty)
+public sealed class StringNotEmptyConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is string s && !string.IsNullOrEmpty(s);
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => "";
+}
+
 // int/count → bool (IsVisible, >0 = true)
 public sealed class CountToVisibilityConverter : IValueConverter
 {
