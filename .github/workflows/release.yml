@@ -62,7 +62,7 @@ jobs:
 
       - name: Sign (macOS ad-hoc)
         if: runner.os == 'macOS'
-        run: codesign --deep --force --sign - ./publish/NestVault_Linux
+        run: codesign --deep --force --sign - ./publish/NestVault
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
