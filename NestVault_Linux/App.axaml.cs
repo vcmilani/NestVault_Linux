@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -43,7 +44,10 @@ public partial class App : Application
             MainAppWindow  = mainWindow;
             desktop.MainWindow = mainWindow;
 
-            using (var appIconStream = AssetLoader.Open(new Uri("avares://NestVault/Assets/app.png")))
+            var iconAsset = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "avares://NestVault/Assets/AppIcon.ico"
+                : "avares://NestVault/Assets/app.png";
+            using (var appIconStream = AssetLoader.Open(new Uri(iconAsset)))
                 mainWindow.Icon = new WindowIcon(appIconStream);
 
             SetupTray();
