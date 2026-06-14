@@ -58,13 +58,16 @@
         <!-- Buttons -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
             <Button Content="Cancel Queue"
+                    Classes="Secondary"
                     Command="{CompiledBinding CancelQueueCommand}"
                     IsEnabled="{CompiledBinding IsRunning}"/>
             <Button Content="Start Queue"
+                    Classes="Primary"
                     Command="{CompiledBinding StartQueueCommand}"
                     IsEnabled="{CompiledBinding CanStart}"
                     IsVisible="{CompiledBinding !IsRunning}"/>
             <Button Content="Close"
+                    Classes="Secondary"
                     IsEnabled="{CompiledBinding !IsRunning}"
                     Click="Close_Click"/>
         </StackPanel>

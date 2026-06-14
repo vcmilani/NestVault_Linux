@@ -55,10 +55,12 @@
 
                     <StackPanel Spacing="8">
                         <Button Content="↻ Refresh Preview"
+                                Classes="Secondary"
                                 Command="{CompiledBinding RefreshPreviewCommand}"
                                 IsEnabled="{CompiledBinding !IsLoadingPreview}"
                                 HorizontalAlignment="Stretch"/>
                         <Button Content="Run Cleanup"
+                                Classes="Primary"
                                 Command="{CompiledBinding RunCleanupCommand}"
                                 IsEnabled="{CompiledBinding !IsRunning}"
                                 HorizontalAlignment="Stretch"

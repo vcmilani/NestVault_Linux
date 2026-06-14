@@ -5,13 +5,13 @@
         Icon="avares://NestVault/Assets/app.png"
         Width="1060" Height="700"
         MinWidth="860" MinHeight="520"
-        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+        Background="#F2F2F7">
 
     <Grid ColumnDefinitions="200,*">
 
         <!-- Navigation Pane -->
         <Border Grid.Column="0"
-                Background="{DynamicResource NavigationViewDefaultPaneBackground}"
+                Background="#EBEBF0"
                 BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                 BorderThickness="0,0,1,0">
             <DockPanel>

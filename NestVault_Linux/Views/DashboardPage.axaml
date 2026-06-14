@@ -16,6 +16,7 @@
                            FontSize="24" FontWeight="Bold"
                            VerticalAlignment="Center"/>
                 <Button Grid.Column="1"
+                        Classes="Icon"
                         ToolTip.Tip="Reload data"
                         Command="{CompiledBinding ReloadCommand}"
                         IsEnabled="{CompiledBinding !IsLoading}">

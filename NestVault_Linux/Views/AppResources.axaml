@@ -61,6 +61,21 @@
     </Style>
 
     <!-- Buttons -->
+    <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Cursor"       Value="Hand"/>
+    </Style>
+
+    <Style Selector="Button.Icon">
+        <Setter Property="Padding"                    Value="0"/>
+        <Setter Property="Width"                      Value="32"/>
+        <Setter Property="Height"                     Value="32"/>
+        <Setter Property="MinWidth"                   Value="0"/>
+        <Setter Property="CornerRadius"               Value="6"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment"   Value="Center"/>
+    </Style>
+
     <Style Selector="Button.Primary">
         <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
         <Setter Property="Foreground" Value="White"/>
@@ -75,8 +90,14 @@
         <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}"/>
     </Style>
     <Style Selector="Button.Secondary">
-        <Setter Property="Padding"  Value="16,8"/>
-        <Setter Property="MinWidth" Value="80"/>
+        <Setter Property="Padding"         Value="16,8"/>
+        <Setter Property="MinWidth"        Value="80"/>
+        <Setter Property="CornerRadius"    Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush"     Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
+    </Style>
+    <Style Selector="Button.Secondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}"/>
     </Style>
 
     <!-- Sidebar NavList -->

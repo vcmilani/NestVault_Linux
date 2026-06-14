@@ -83,6 +83,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <Button Content="Test Connection"
+                                            Classes="Secondary"
                                             Command="{CompiledBinding TestConnectionCommand}"
                                             IsEnabled="{CompiledBinding !IsTestingConnection}"/>
                                 </StackPanel>
@@ -158,6 +159,7 @@
             <!-- Save -->
             <StackPanel Orientation="Horizontal" Spacing="8" Margin="4,0">
                 <Button Content="Save Settings"
+                        Classes="Primary"
                         Command="{CompiledBinding SaveCommand}"
                         IsEnabled="{CompiledBinding IsDirty}"/>
             </StackPanel>

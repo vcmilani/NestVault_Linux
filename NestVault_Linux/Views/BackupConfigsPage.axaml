@@ -12,8 +12,8 @@
 
             <!-- Toolbar -->
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="8,8,8,4">
-                <Button Command="{CompiledBinding AddProfileCommand}" Content="+" ToolTip.Tip="Add Profile"/>
-                <Button Command="{CompiledBinding DeleteProfileCommand}"
+                <Button Classes="Icon" Command="{CompiledBinding AddProfileCommand}" Content="+" ToolTip.Tip="Add Profile"/>
+                <Button Classes="Icon" Command="{CompiledBinding DeleteProfileCommand}"
                         CommandParameter="{CompiledBinding SelectedProfile}"
                         Content="−" ToolTip.Tip="Delete Selected"
                         IsEnabled="{CompiledBinding IsEditing}"/>
@@ -197,6 +197,7 @@
                                        IsVisible="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError,
                                                    Converter={StaticResource CountToVisibilityConverter}}"/>
                             <Button Content="Import"
+                                    Classes="Secondary"
                                     Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).ImportFromCliCommand}"/>
                         </StackPanel>
                     </Expander>
@@ -241,6 +242,7 @@
                                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                                         <TextBox Grid.Column="0" x:Name="SourcePathBox" Text="{CompiledBinding SourcePath}"/>
                                         <Button Grid.Column="1" Content="Browse…"
+                                                Classes="Secondary"
                                                 Click="BrowseFolder_Click"/>
                                     </Grid>
                                 </StackPanel>
@@ -263,6 +265,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <Button Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).TestConnectionCommand}"
+                                            Classes="Secondary"
                                             Content="Test Connection"
                                             IsEnabled="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).IsNotTestingConnection}"/>
                                 </StackPanel>
@@ -320,6 +323,7 @@
                                                  Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).NewExclude}"
                                                  PlaceholderText="e.g. .DS_Store or node_modules"/>
                                         <Button Grid.Column="1" Content="Add"
+                                                Classes="Secondary"
                                                 Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).AddExcludeCommand}"/>
                                     </Grid>
                                     <ListBox ItemsSource="{CompiledBinding Excludes}"
@@ -328,7 +332,8 @@
                                             <DataTemplate x:DataType="x:String">
                                                 <Grid ColumnDefinitions="*,Auto">
                                                     <TextBlock Grid.Column="0" Text="{CompiledBinding}" FontFamily="monospace"/>
-                                                    <Button Grid.Column="1" Content="×" Padding="4,0"
+                                                    <Button Grid.Column="1" Content="×"
+                                                            Classes="Icon"
                                                             Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).RemoveExcludeCommand}"
                                                             CommandParameter="{CompiledBinding}"/>
                                                 </Grid>
