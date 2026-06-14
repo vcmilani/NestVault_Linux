@@ -25,6 +25,13 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="models:BackupProfile">
                         <StackPanel Margin="4,4" Spacing="2">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Remover"
+                                              Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).DeleteProfileCommand}"
+                                              CommandParameter="{CompiledBinding}"/>
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
                             <TextBlock Text="{CompiledBinding Name}" FontWeight="SemiBold"/>
                             <TextBlock Text="{CompiledBinding Label}" FontSize="11" Opacity="0.6"
                                        FontFamily="monospace"/>
@@ -48,42 +55,43 @@
 
             <!-- 2. VIEW MODE -->
             <ScrollViewer IsVisible="{CompiledBinding IsViewMode}" Padding="20">
-                <StackPanel Spacing="14">
+                <StackPanel Spacing="14" DataContext="{CompiledBinding SelectedProfile}">
 
                     <!-- Header: name + status + Edit / Run -->
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0" Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <TextBlock Text="{CompiledBinding SelectedProfile.Name}"
+                                <TextBlock Text="{CompiledBinding Name}"
                                            FontSize="20" FontWeight="Bold"/>
                                 <Border Classes="Pill"
-                                        IsVisible="{CompiledBinding SelectedProfile.Enabled,
+                                        IsVisible="{CompiledBinding Enabled,
                                                     Converter={StaticResource BoolNegateConverter}}"
                                         VerticalAlignment="Center">
                                     <TextBlock Text="INACTIVE" FontSize="10" FontWeight="Bold" Opacity="0.7"/>
                                 </Border>
                             </StackPanel>
-                            <TextBlock Text="{CompiledBinding SelectedProfile.Label}"
+                            <TextBlock Text="{CompiledBinding Label}"
                                        FontFamily="monospace" FontSize="12" Opacity="0.55"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
                             <Button Content="Edit"
                                     Classes="Secondary"
-                                    Command="{CompiledBinding EditProfileCommand}"/>
+                                    Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).EditProfileCommand}"/>
                             <Button Content="▶  Run"
                                     Classes="Primary"
                                     Click="RunBackup_Click"
-                                    IsEnabled="{CompiledBinding CanRunProfile}"/>
+                                    IsEnabled="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CanRunProfile}"/>
                         </StackPanel>
                     </Grid>
 
                     <!-- Schedule card (only if schedule active) -->
                     <Border Background="#1A0078D7" BorderBrush="#330078D7" BorderThickness="1"
                             CornerRadius="8" Padding="12"
-                            IsVisible="{CompiledBinding SelectedProfile.Schedule.Enabled}">
+                            IsVisible="{CompiledBinding Schedule.Enabled}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBlock Text="🕐" VerticalAlignment="Center"/>
-                            <TextBlock Text="{CompiledBinding ScheduleSummary}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).ScheduleSummary}"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
@@ -97,7 +105,7 @@
                                     <TextBlock Text="📁" FontSize="13"/>
                                     <TextBlock Text="Source Folder" FontSize="11" FontWeight="SemiBold" Opacity="0.6"/>
                                 </StackPanel>
-                                <SelectableTextBlock Text="{CompiledBinding SelectedProfile.SourcePath}"
+                                <SelectableTextBlock Text="{CompiledBinding SourcePath}"
                                                      FontFamily="monospace" FontSize="11"
                                                      TextWrapping="Wrap"/>
                             </StackPanel>
@@ -110,7 +118,7 @@
                                     <TextBlock Text="🖧" FontSize="13"/>
                                     <TextBlock Text="Server" FontSize="11" FontWeight="SemiBold" Opacity="0.6"/>
                                 </StackPanel>
-                                <SelectableTextBlock Text="{CompiledBinding ServerOverrideDisplay}"
+                                <SelectableTextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).ServerOverrideDisplay}"
                                                      FontFamily="monospace" FontSize="11"
                                                      TextWrapping="Wrap"/>
                             </StackPanel>
@@ -123,7 +131,7 @@
                                     <TextBlock Text="⚙" FontSize="13"/>
                                     <TextBlock Text="Workers" FontSize="11" FontWeight="SemiBold" Opacity="0.6"/>
                                 </StackPanel>
-                                <TextBlock Text="{CompiledBinding SelectedProfile.Workers}"
+                                <TextBlock Text="{CompiledBinding Workers}"
                                            FontSize="22" FontWeight="Bold"/>
                             </StackPanel>
                         </Border>
@@ -135,7 +143,7 @@
                                     <TextBlock Text="/" FontSize="13" FontFamily="monospace" FontWeight="Bold" Opacity="0.7"/>
                                     <TextBlock Text="Prefix" FontSize="11" FontWeight="SemiBold" Opacity="0.6"/>
                                 </StackPanel>
-                                <SelectableTextBlock Text="{CompiledBinding PrefixDisplay}"
+                                <SelectableTextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).PrefixDisplay}"
                                                      FontFamily="monospace" FontSize="11"/>
                             </StackPanel>
                         </Border>
@@ -144,14 +152,14 @@
 
                     <!-- Excludes card (only if any) -->
                     <Border Classes="Card"
-                            IsVisible="{CompiledBinding SelectedProfile.Excludes,
+                            IsVisible="{CompiledBinding Excludes,
                                         Converter={StaticResource CountToVisibilityConverter}}">
                         <StackPanel Spacing="8">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="🚫" FontSize="13"/>
                                 <TextBlock Text="Excludes" FontSize="11" FontWeight="SemiBold" Opacity="0.6"/>
                             </StackPanel>
-                            <ItemsControl ItemsSource="{CompiledBinding SelectedProfile.Excludes}">
+                            <ItemsControl ItemsSource="{CompiledBinding Excludes}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal"/>
@@ -172,7 +180,7 @@
                     <Expander Header="CLI Preview" Margin="0,4">
                         <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                                 CornerRadius="4" Padding="12" Margin="0,8">
-                            <SelectableTextBlock Text="{CompiledBinding CliPreview}"
+                            <SelectableTextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliPreview}"
                                                  FontFamily="monospace" FontSize="12"
                                                  TextWrapping="Wrap"/>
                         </Border>
@@ -181,15 +189,15 @@
                     <!-- CLI Import -->
                     <Expander Header="Import from CLI Command" Margin="0,0,0,4">
                         <StackPanel Spacing="8" Margin="0,8">
-                            <TextBox Text="{CompiledBinding CliImportText}"
+                            <TextBox Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportText}"
                                      AcceptsReturn="True" Height="80"
                                      PlaceholderText="Paste nestvault backup ... command here"/>
-                            <TextBlock Text="{CompiledBinding CliImportError}"
+                            <TextBlock Text="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError}"
                                        Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                                       IsVisible="{CompiledBinding CliImportError,
+                                       IsVisible="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).CliImportError,
                                                    Converter={StaticResource CountToVisibilityConverter}}"/>
                             <Button Content="Import"
-                                    Command="{CompiledBinding ImportFromCliCommand}"/>
+                                    Command="{CompiledBinding $parent[UserControl].((vm:BackupConfigsViewModel)DataContext).ImportFromCliCommand}"/>
                         </StackPanel>
                     </Expander>
 

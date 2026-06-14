@@ -422,7 +422,7 @@ public partial class BackupRunner : ObservableObject
 
     // MARK: - Filesystem Scan
 
-    private static List<ScannedFile> ScanDirectory(string source, List<string> excludes)
+    private static List<ScannedFile> ScanDirectory(string source, IList<string> excludes)
     {
         var files = new List<ScannedFile>();
         foreach (var path in Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories))

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using static NestVault_Linux.Models.ModelHelpers;
 
@@ -199,7 +200,7 @@ public class BackupProfile
     public string Name           { get; set; } = "New Backup";
     public string Label          { get; set; } = "";
     public string SourcePath     { get; set; } = "";
-    public List<string> Excludes { get; set; } = [];
+    public ObservableCollection<string> Excludes { get; set; } = [];
     public int    Workers        { get; set; } = 4;
     public string Prefix         { get; set; } = "";
     public string ServerOverride { get; set; } = "";

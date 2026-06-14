@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -147,7 +148,7 @@ public partial class BackupConfigsViewModel : ObservableObject
         if (string.IsNullOrEmpty(val) || EditingProfile is null) return;
         if (!EditingProfile.Excludes.Contains(val))
         {
-            EditingProfile.Excludes = [.. EditingProfile.Excludes, val];
+            EditingProfile.Excludes.Add(val);
             MarkDirty();
         }
         NewExclude = "";
@@ -157,7 +158,7 @@ public partial class BackupConfigsViewModel : ObservableObject
     private void RemoveExclude(string exclude)
     {
         if (EditingProfile is null) return;
-        EditingProfile.Excludes = EditingProfile.Excludes.Where(e => e != exclude).ToList();
+        EditingProfile.Excludes.Remove(exclude);
         MarkDirty();
     }
 
@@ -220,7 +221,7 @@ public partial class BackupConfigsViewModel : ObservableObject
         Name           = src.Name,
         Label          = src.Label,
         SourcePath     = src.SourcePath,
-        Excludes       = [.. src.Excludes],
+        Excludes       = new ObservableCollection<string>(src.Excludes),
         Workers        = src.Workers,
         Prefix         = src.Prefix,
         ServerOverride = src.ServerOverride,

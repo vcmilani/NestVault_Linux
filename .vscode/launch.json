@@ -6,7 +6,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/NestVault_Linux/bin/Debug/net10.0/NestVault_Linux",
+      "program": "${workspaceFolder}/NestVault_Linux/bin/Debug/net10.0/NestVault",
       "args": [],
       "cwd": "${workspaceFolder}/NestVault_Linux",
       "stopAtEntry": false,
