@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="NestVault_Linux.MainWindow"
         Title="NestVault"
-        Icon="avares://NestVault_Linux/Assets/app.png"
+        Icon="avares://NestVault/Assets/app.png"
         Width="1060" Height="700"
         MinWidth="860" MinHeight="520"
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">

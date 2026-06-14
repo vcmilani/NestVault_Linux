@@ -5,7 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>NestVault_Linux</AssemblyName>
+    <AssemblyName>NestVault</AssemblyName>
     <RootNamespace>NestVault_Linux</RootNamespace>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <Version>3.0.0</Version>

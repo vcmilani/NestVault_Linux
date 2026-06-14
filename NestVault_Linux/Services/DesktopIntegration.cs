@@ -46,7 +46,7 @@ public static class DesktopIntegration
     {
         Directory.CreateDirectory(IconDir);
 
-        using var src = AssetLoader.Open(new Uri("avares://NestVault_Linux/Assets/app.png"));
+        using var src = AssetLoader.Open(new Uri("avares://NestVault/Assets/app.png"));
         using var dst = File.Create(IconPath);
         src.CopyTo(dst);
     }
@@ -66,7 +66,7 @@ public static class DesktopIntegration
             Icon={AppId}
             Comment=NestVault Backup Manager
             Categories=Utility;System;
-            StartupWMClass=NestVault_Linux
+            StartupWMClass=NestVault
             """;
 
         File.WriteAllText(DesktopFilePath, content);

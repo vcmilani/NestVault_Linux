@@ -31,7 +31,7 @@ build_bundle() {
     mkdir -p "${bundle_dir}/Contents/MacOS"
     mkdir -p "${bundle_dir}/Contents/Resources"
 
-    cp "${publish_dir}/NestVault_Linux" "${bundle_dir}/Contents/MacOS/NestVault"
+    cp "${publish_dir}/NestVault" "${bundle_dir}/Contents/MacOS/NestVault"
     chmod +x "${bundle_dir}/Contents/MacOS/NestVault"
 
     cp "NestVault_Linux/Assets/AppIcon.icns" "${bundle_dir}/Contents/Resources/AppIcon.icns"

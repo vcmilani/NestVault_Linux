@@ -43,7 +43,7 @@ public partial class App : Application
             MainAppWindow  = mainWindow;
             desktop.MainWindow = mainWindow;
 
-            using (var appIconStream = AssetLoader.Open(new Uri("avares://NestVault_Linux/Assets/app.png")))
+            using (var appIconStream = AssetLoader.Open(new Uri("avares://NestVault/Assets/app.png")))
                 mainWindow.Icon = new WindowIcon(appIconStream);
 
             SetupTray();
@@ -70,7 +70,7 @@ public partial class App : Application
 
     private void SetupTray()
     {
-        using var iconStream = AssetLoader.Open(new Uri("avares://NestVault_Linux/Assets/tray.png"));
+        using var iconStream = AssetLoader.Open(new Uri("avares://NestVault/Assets/tray.png"));
         var trayIcon = new TrayIcon
         {
             ToolTipText = "NestVault",
